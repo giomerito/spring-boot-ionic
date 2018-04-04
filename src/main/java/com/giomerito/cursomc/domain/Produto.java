@@ -12,6 +12,8 @@ import javax.persistence.JoinColumn;
 import javax.persistence.JoinTable;
 import javax.persistence.ManyToMany;
 
+import com.fasterxml.jackson.annotation.JsonBackReference;
+
 @Entity
 public class Produto implements Serializable{
 	
@@ -23,12 +25,14 @@ public class Produto implements Serializable{
 	private String nome;
 	private Double preco; 
 	
+	@JsonBackReference //Do outro lado da associacao já esta carregando os dados não quero que faz por aqui
 	@ManyToMany
 	@JoinTable(name="PRODUTO_CATEGORIA", 
 		joinColumns = @JoinColumn(name="produto_id"),
 		inverseJoinColumns = @JoinColumn(name="categoria_id")
 	)//Instrução para informar para o banco qual as primary_key das tabelas relacionadas
 	private List<Categoria> categorias = new ArrayList<>();
+	
 	
 	public Produto() {
 		
