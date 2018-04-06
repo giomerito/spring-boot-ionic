@@ -1,7 +1,5 @@
 package com.giomerito.cursomc.domain.enums;
 
-import static org.mockito.Mockito.RETURNS_DEEP_STUBS;
-
 public enum EstadoPagamento {
 
 	PENDENTE(1, "Pendente"), QUITADO(2, "Quitado"), CANCELADO(3, "Cancelado");

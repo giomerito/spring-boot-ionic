@@ -5,6 +5,8 @@ import java.io.Serializable;
 import javax.persistence.EmbeddedId;
 import javax.persistence.Entity;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
+
 @Entity
 public class ItemPedido implements Serializable {
 
@@ -12,6 +14,8 @@ public class ItemPedido implements Serializable {
 
 	// Chave -> Atributo composto -> na classe ItemPedidoPK precisa ser anotada como
 	// @Embeddable
+
+	@JsonIgnore // Ignora tudo que vier de itenspedidospk
 	@EmbeddedId
 	private ItemPedidoPK id = new ItemPedidoPK();
 
@@ -29,6 +33,15 @@ public class ItemPedido implements Serializable {
 		this.desconto = desconto;
 		this.quantidade = quantidade;
 		this.preco = preco;
+	}
+
+	@JsonIgnore
+	public Pedido getPedido() {
+		return id.getPedido();
+	}
+
+	public Produto getProduto() {
+		return id.getProduto();
 	}
 
 	public ItemPedidoPK getId() {
@@ -63,14 +76,6 @@ public class ItemPedido implements Serializable {
 		this.preco = preco;
 	}
 
-	public Pedido getPedido() {
-		return this.getPedido();
-	}
-
-	public Produto getProduto() {
-		return this.getProduto();
-	}
-
 	@Override
 	public int hashCode() {
 		final int prime = 31;
@@ -95,5 +100,4 @@ public class ItemPedido implements Serializable {
 			return false;
 		return true;
 	}
-
 }
