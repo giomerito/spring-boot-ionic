@@ -13,7 +13,7 @@ public class ClienteService {
 	@Autowired //esta dependência vai ser automaticamente instânciada pelo spring
 	private ClienteRepository repo;
 	
-	public Cliente buscar(Integer id) {
+	public Cliente find(Integer id) {
 		Cliente obj = repo.findOne(id);
 		if(obj == null) { //Lança uma Exception
 			throw new ObjectNotFoundException("Objeto não encontrado! Id: " + id 
