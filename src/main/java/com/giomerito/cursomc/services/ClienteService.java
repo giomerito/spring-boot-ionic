@@ -8,32 +8,43 @@ import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Sort.Direction;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
+import com.giomerito.cursomc.domain.Cidade;
 import com.giomerito.cursomc.domain.Cliente;
+import com.giomerito.cursomc.domain.Endereco;
+import com.giomerito.cursomc.domain.enums.TipoCliente;
 import com.giomerito.cursomc.dto.ClienteDTO;
+import com.giomerito.cursomc.dto.ClienteNewDTO;
 import com.giomerito.cursomc.repositories.ClienteRepository;
+import com.giomerito.cursomc.repositories.EnderecoRepository;
 import com.giomerito.cursomc.services.exceptions.DataIntegrityException;
 import com.giomerito.cursomc.services.exceptions.ObjectNotFoundException;
 
 @Service
 public class ClienteService {
-	
-	@Autowired //esta dependência vai ser automaticamente instânciada pelo spring
+
+	@Autowired // esta dependência vai ser automaticamente instânciada pelo spring
 	private ClienteRepository repo;
+	@Autowired
+	private EnderecoRepository enderecoRepository;
 	
 	public Cliente find(Integer id) {
 		Cliente obj = repo.findOne(id);
-		if(obj == null) { //Lança uma Exception
-			throw new ObjectNotFoundException("Objeto não encontrado! Id: " + id 
-					+ ", Tipo: " + Cliente.class.getName());
+		if (obj == null) { // Lança uma Exception
+			throw new ObjectNotFoundException(
+					"Objeto não encontrado! Id: " + id + ", Tipo: " + Cliente.class.getName());
 		}
 		return obj;
 	}
-	/* Implementação ficará por ultimo
+
+	@Transactional
 	public Cliente insert(Cliente obj) {
 		obj.setId(null);
-		return repo.save(obj);
-	}*/
+		obj = repo.save(obj);
+		enderecoRepository.save(obj.getEnderecos());
+		return obj;
+	}
 
 	public Cliente update(Cliente obj) {
 		Cliente newObj = find(obj.getId());
@@ -50,25 +61,40 @@ public class ClienteService {
 		}
 	}
 
-	
-	public List<Cliente> findAll(){
+	public List<Cliente> findAll() {
 		return repo.findAll();
 	}
-	
-	//Metodo de paginação
-	public Page<Cliente> findPage(Integer page, Integer linesPerPage, String orderBy, String direction){
+
+	// Metodo de paginação
+	public Page<Cliente> findPage(Integer page, Integer linesPerPage, String orderBy, String direction) {
 		PageRequest pageRequest = new PageRequest(page, linesPerPage, Direction.valueOf(direction), orderBy);
 		return repo.findAll(pageRequest);
 	}
-	
-	//Metodo auxiliar para pegar um DTO e converter em uma entidade
+
+	// Metodo auxiliar para pegar um DTO e converter em uma entidade
+	public Cliente fromDto(ClienteNewDTO newDTO) {
+		Cliente cli = new Cliente(null, newDTO.getNome(), newDTO.getEmail(), newDTO.getCpfOuCnpj(), TipoCliente.toEnum(newDTO.getTipo()));
+		Cidade cid = new Cidade(newDTO.getCidadeId(), null, null);
+		Endereco end = new Endereco(null, newDTO.getLogradouro(), newDTO.getNumero(), newDTO.getComplemento(), newDTO.getBairro(), newDTO.getCep(), cli, cid);
+		cli.getEnderecos().add(end);
+		cli.getTelefones().add(newDTO.getTelefone1());
+		if(newDTO.getTelefone2() != null) {
+			cli.getTelefones().add(newDTO.getTelefone2());
+		}
+		if(newDTO.getTelefone3() != null) {
+			cli.getTelefones().add(newDTO.getTelefone3());
+		}
+		return cli;
+	}
+
+	// Metodo auxiliar para pegar um DTO e converter em uma entidade
 	public Cliente fromDto(ClienteDTO objDTO) {
 		return new Cliente(objDTO.getId(), objDTO.getNome(), objDTO.getEmail(), null, null);
 	}
-	
+
 	private void updateData(Cliente newObj, Cliente obj) {
 		newObj.setNome(obj.getNome());
 		newObj.setEmail(obj.getEmail());
 	}
-	
+
 }
