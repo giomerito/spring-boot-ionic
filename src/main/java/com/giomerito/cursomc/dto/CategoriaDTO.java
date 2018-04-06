@@ -34,4 +34,5 @@ public class CategoriaDTO implements Serializable {
 		this.nome = nome;
 	}
 
+	//Classe usada para servir de base para as consultas personalizada das caregorias
 }
