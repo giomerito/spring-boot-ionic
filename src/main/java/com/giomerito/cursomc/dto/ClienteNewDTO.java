@@ -2,21 +2,41 @@ package com.giomerito.cursomc.dto;
 
 import java.io.Serializable;
 
+import org.hibernate.validator.constraints.Email;
+import org.hibernate.validator.constraints.Length;
+import org.hibernate.validator.constraints.NotEmpty;
+
+import com.giomerito.cursomc.services.validation.ClienteInsert;
+
+@ClienteInsert
 public class ClienteNewDTO implements Serializable {
 
 	private static final long serialVersionUID = 1L;
 
 	// Atributos da classe Cliente
+	@NotEmpty(message = "Preenchimento obrigatório!")
+	@Length(min = 5, max = 120, message = "O Tamanho é de 5 a 120 caracteres!")
 	private String nome;
+
+	@NotEmpty(message = "Preenchimento obrigatório!")
+	@Email(message = "Email inválido!")
 	private String email;
+
+	@NotEmpty(message = "Preenchimento obrigatório!")
 	private String cpfOuCnpj;
+
 	private Integer tipo;
 
 	// Atributos da classe Endereco
+	@NotEmpty(message = "Preenchimento obrigatório!")
 	private String logradouro;
+	@NotEmpty(message = "Preenchimento obrigatório!")
 	private String numero;
+
 	private String complemento;
 	private String bairro;
+
+	@NotEmpty(message = "Preenchimento obrigatório!")
 	private String cep;
 
 	// Atributos da Enumeração Telefone
