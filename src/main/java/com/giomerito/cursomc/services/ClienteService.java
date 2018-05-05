@@ -7,6 +7,7 @@ import org.springframework.dao.DataIntegrityViolationException;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Sort.Direction;
+import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -23,6 +24,9 @@ import com.giomerito.cursomc.services.exceptions.ObjectNotFoundException;
 
 @Service
 public class ClienteService {
+	
+	@Autowired
+	private BCryptPasswordEncoder pe;
 
 	@Autowired // esta dependência vai ser automaticamente instânciada pelo spring
 	private ClienteRepository repo;
@@ -74,7 +78,7 @@ public class ClienteService {
 
 	// Metodo auxiliar para pegar um DTO e converter em uma entidade
 	public Cliente fromDto(ClienteNewDTO newDTO) {
-		Cliente cli = new Cliente(null, newDTO.getNome(), newDTO.getEmail(), newDTO.getCpfOuCnpj(), TipoCliente.toEnum(newDTO.getTipo()));
+		Cliente cli = new Cliente(null, newDTO.getNome(), newDTO.getEmail(), newDTO.getCpfOuCnpj(), TipoCliente.toEnum(newDTO.getTipo()), pe.encode(newDTO.getSenha()));
 		Cidade cid = new Cidade(newDTO.getCidadeId(), null, null);
 		Endereco end = new Endereco(null, newDTO.getLogradouro(), newDTO.getNumero(), newDTO.getComplemento(), newDTO.getBairro(), newDTO.getCep(), cli, cid);
 		cli.getEnderecos().add(end);
@@ -90,7 +94,7 @@ public class ClienteService {
 
 	// Metodo auxiliar para pegar um DTO e converter em uma entidade
 	public Cliente fromDto(ClienteDTO objDTO) {
-		return new Cliente(objDTO.getId(), objDTO.getNome(), objDTO.getEmail(), null, null);
+		return new Cliente(objDTO.getId(), objDTO.getNome(), objDTO.getEmail(), null, null, null);
 	}
 
 	private void updateData(Cliente newObj, Cliente obj) {
