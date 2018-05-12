@@ -20,10 +20,10 @@ import com.giomerito.cursomc.dto.CredenciaisDTO;
 public class JWTAuthenticationFilter extends UsernamePasswordAuthenticationFilter{
 	
 	private AuthenticationManager authenticationManager;
-	private JWTSecurity jwtUtil;
+	private JWTUtil jwtUtil;
 	
 	
-	public JWTAuthenticationFilter(AuthenticationManager authenticationManager, JWTSecurity jwtUtil) {
+	public JWTAuthenticationFilter(AuthenticationManager authenticationManager, JWTUtil jwtUtil) {
 		super();
 		this.authenticationManager = authenticationManager;
 		this.jwtUtil = jwtUtil;

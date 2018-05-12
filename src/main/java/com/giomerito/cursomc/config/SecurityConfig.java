@@ -18,13 +18,14 @@ import org.springframework.web.cors.CorsConfigurationSource;
 import org.springframework.web.cors.UrlBasedCorsConfigurationSource;
 
 import com.giomerito.cursomc.security.JWTAuthenticationFilter;
-import com.giomerito.cursomc.security.JWTSecurity;
+import com.giomerito.cursomc.security.JWTAuthorizationFilter;
+import com.giomerito.cursomc.security.JWTUtil;
 
 @Configuration
 public class SecurityConfig extends WebSecurityConfigurerAdapter{
 	
 	@Autowired
-	private JWTSecurity jwtUtil;
+	private JWTUtil jwtUtil;
 	
 	@Autowired
 	private UserDetailsService userDetailsService;
@@ -56,6 +57,7 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter{
 			.antMatchers(PUBLIC_MATCHERS).permitAll()
 			.anyRequest().authenticated();
 		http.addFilter(new JWTAuthenticationFilter(authenticationManager(), jwtUtil));
+		http.addFilter(new JWTAuthorizationFilter(authenticationManager(), jwtUtil, userDetailsService));
 		http.sessionManagement().sessionCreationPolicy(SessionCreationPolicy.STATELESS);
 	}
 	
